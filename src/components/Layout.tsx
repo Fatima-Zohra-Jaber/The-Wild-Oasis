@@ -4,13 +4,15 @@ import Sidebar from "./Sidebar";
 
 function Layout() {
   return (
-    <>
-      <Header />
+    <div className="flex h-screen overflow-hidden">
       <Sidebar />
-      <main>
-        <Outlet />
-      </main>
-    </>
+      <div className="flex flex-col flex-1">
+        <Header />
+        <main className="flex-1 overflow-y-auto  bg-gray-50 p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 }
 

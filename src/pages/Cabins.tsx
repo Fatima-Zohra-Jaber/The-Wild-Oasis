@@ -8,11 +8,14 @@ import { formatCurrency } from "../utils/helpers";
 import { useState } from "react";
 import Modal from "../components/Modal";
 import CabinForm, { type Cabin } from "../components/CabinForm";
+import Spinner from "../components/Spinner";
+import Error from "../components/Error";
 
 function Cabins() {
   const [filter, setFilter] = useState("all");
   const [openModal, setOpenModal] = useState(false);
-  const [updatedCabin, setUpdatedCabin] = useState<Cabin | undefined>();
+
+  const [cabinToUpdate, setCabinToUpdate] = useState<Cabin | undefined>();
 
   const { data: cabins, isLoading, error } = useCabins();
   const { mutate: deleteCabin } = useDeleteCabin();
@@ -24,7 +27,7 @@ function Cabins() {
   });
 
   const handleUpdateCabin = (cabin: Cabin) => {
-    setUpdatedCabin(cabin);
+    setCabinToUpdate(cabin);
     setOpenModal(true);
   };
   return (
@@ -36,7 +39,7 @@ function Cabins() {
             className="rounded-md border border-stone-200 bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm"
             onClick={() => {
               setOpenModal(true);
-              setUpdatedCabin(undefined);
+              setCabinToUpdate(undefined);
             }}
           >
             Add new cabin
@@ -70,7 +73,11 @@ function Cabins() {
           </select>
         </div>
       </div>
-
+      {isLoading ? (
+        <Spinner />
+      ) : error ? (
+        <Error message="An error occurred while fetching cabins." />
+      ) : filteredCabins && filteredCabins.length > 0 ? (
         <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
           <table className="w-full">
             <thead>
@@ -139,15 +146,19 @@ function Cabins() {
             </tbody>
           </table>
         </div>
+      ) : (
+        <Error message="No cabins found. Please adjust your filters or add new cabins." />
+      )}
 
       {openModal && (
         <Modal onClose={() => setOpenModal(false)}>
           <CabinForm
-            cabinToUpdate={updatedCabin}
+            cabinToUpdate={cabinToUpdate}
             onCloseModal={() => setOpenModal(false)}
           />
         </Modal>
       )}
+
     </>
   );}
 

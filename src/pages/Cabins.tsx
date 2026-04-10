@@ -2,12 +2,15 @@ import { HiEllipsisVertical } from "react-icons/hi2";
 import { useCabins, useDeleteCabin } from "../hooks/useCabins";
 import { formatCurrency } from "../utils/helpers";
 import { useState } from "react";
+import Modal from "../components/Modal";
+import CabinForm from "../components/CabinForm";
 
 function Cabins() {
   const [filter, setFilter] = useState("all");
+  const [showForm, setShowForm] = useState(false);
 
   const { data: cabins, isLoading, error } = useCabins();
-  const { mutate: deleteCabin, isLoading: isDelting } = useDeleteCabin();
+  const { mutate: deleteCabin } = useDeleteCabin();
 
   const filteredCabins = cabins?.filter((cabin) => {
     if (filter === "no-discount") return !cabin.discount;
@@ -17,12 +20,17 @@ function Cabins() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6 ">
+      <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-medium text-stone-800">All cabins</h1>
         <div className="flex items-center gap-4">
-       
+          <button
+            className="rounded-md border border-stone-200 bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm"
+            onClick={() => setShowForm(true)}
+          >
+            Add new cabin
+          </button>
 
-          <div className="flex bg-white border border-stone-200 rounded-lg p-0.5">
+          <div className="flex rounded-lg border border-stone-200 bg-white p-0.5">
             {[
               { key: "all", label: "All" },
               { key: "no-discount", label: "No discount" },
@@ -31,10 +39,10 @@ function Cabins() {
               <button
                 key={key}
                 onClick={() => setFilter(key)}
-                className={`px-3 py-1.5 text-sm rounded-md transition-all border-none ${
+                className={`rounded-md border-none px-3 py-1.5 text-sm transition-all ${
                   filter === key
-                    ? "bg-indigo-600 text-white font-medium shadow-sm border border-stone-200 "
-                    : " hover:text-stone-900"
+                    ? "border border-stone-200 bg-indigo-600 font-medium text-white shadow-sm"
+                    : "hover:text-stone-900"
                 }`}
               >
                 {label}
@@ -42,7 +50,7 @@ function Cabins() {
             ))}
           </div>
 
-          <select className="text-sm border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-800 focus:outline-none">
+          <select className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-800 focus:outline-none">
             <option>Sort by name (A-Z)</option>
             <option>Sort by name (Z-A)</option>
             <option>Sort by price (low)</option>
@@ -51,21 +59,21 @@ function Cabins() {
         </div>
       </div>
 
-      <div className="bg-white border border-stone-200 rounded-xl overflow-hidden ">
+      <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
         <table className="w-full">
           <thead>
             <tr className="border-b border-stone-200">
               <th className="w-20 p-3"></th>
-              <th className="p-3 text-left text-xs font-medium text-stone-600 uppercase tracking-wider">
+              <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
                 Cabin
               </th>
-              <th className="p-3 text-left text-xs font-medium text-stone-600 uppercase tracking-wider">
+              <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
                 Capacity
               </th>
-              <th className="p-3 text-left text-xs font-medium text-stone-600 uppercase tracking-wider">
+              <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
                 Price
               </th>
-              <th className="p-3 text-left text-xs font-medium text-stone-600 uppercase tracking-wider">
+              <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
                 Discount
               </th>
               <th className="p-3"></th>
@@ -75,16 +83,16 @@ function Cabins() {
             {filteredCabins?.map((cabin) => (
               <tr
                 key={cabin.id}
-                className="border-b border-stone-200/60 last:border-none hover:bg-stone-50 transition-colors"
+                className="border-b border-stone-200/60 transition-colors last:border-none hover:bg-stone-50"
               >
                 <td className="p-1">
                   <img
                     src={cabin.image}
                     alt={cabin.name}
-                    className="w-18 h-12 object-cover rounded-lg block"
+                    className="block h-12 w-18 rounded-lg object-cover"
                   />
                 </td>
-                <td className="p-3 font-medium text-stone-800 text-sm">
+                <td className="p-3 text-sm font-medium text-stone-800">
                   {cabin.name}
                 </td>
                 <td className="p-3 text-sm text-stone-600">
@@ -100,9 +108,9 @@ function Cabins() {
                 </td>
                 <td className="p-3">
                   <button
-                    className="p-1 rounded-md text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors"
+                    className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
                     onClick={() => deleteCabin(cabin.id)}
-                    disabled={isDelting}
+                    // disabled={isDelting}
                   >
                     <HiEllipsisVertical size={18} />
                   </button>
@@ -112,6 +120,12 @@ function Cabins() {
           </tbody>
         </table>
       </div>
+
+      {showForm && (
+        <Modal onClose={() => setShowForm(false)}>
+          <CabinForm />
+        </Modal>
+      )}
     </>
   );
 }

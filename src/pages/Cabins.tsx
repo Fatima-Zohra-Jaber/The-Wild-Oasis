@@ -10,12 +10,15 @@ import Modal from "../components/Modal";
 import CabinForm, { type Cabin } from "../components/CabinForm";
 import Spinner from "../components/Spinner";
 import Error from "../components/Error";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 function Cabins() {
   const [filter, setFilter] = useState("all");
   const [openModal, setOpenModal] = useState(false);
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
 
   const [cabinToUpdate, setCabinToUpdate] = useState<Cabin | undefined>();
+  const [cabinToDelete, setCabinToDelete] = useState<number | null>(null);
 
   const { data: cabins, isLoading, error } = useCabins();
   const { mutate: deleteCabin } = useDeleteCabin();
@@ -135,7 +138,10 @@ function Cabins() {
                     </button>
                     <button
                       className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
-                      onClick={() => deleteCabin(cabin.id)}
+                      onClick={() => {
+                        setCabinToDelete(cabin.id);
+                        setOpenConfirmModal(true);
+                      }}
                       // disabled={isDelting}
                     >
                       <HiXMark size={18} />
@@ -159,7 +165,22 @@ function Cabins() {
         </Modal>
       )}
 
+      {openConfirmModal && (
+        <ConfirmationModal
+          title="Delete cabin"
+          message={`Are you sure you want to delete this cabin permanently?\n 
+           This action cannot be undone.`}
+          onConfirm={() => {
+            if (cabinToDelete !== null) {
+              deleteCabin(cabinToDelete);
+            }
+            setOpenConfirmModal(false);
+          }}
+          onClose={() => setOpenConfirmModal(false)}
+        />
+      )}
     </>
-  );}
+  );
+}
 
 export default Cabins;

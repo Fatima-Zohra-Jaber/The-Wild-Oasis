@@ -1,8 +1,9 @@
-import { useForm, type FieldErrors } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Input from "./Input";
-import { useCreateCabin } from "../hooks/useCabins";
+import { useCreateCabin, useUpdateCabin } from "../hooks/useCabins";
 
 export interface Cabin {
+  id: number;
   name: string;
   maxCapacity: number;
   regularPrice: number;
@@ -10,30 +11,63 @@ export interface Cabin {
   description: string;
   image: File | string;
 }
-function CabinForm() {
+function CabinForm({
+  cabinToUpdate,
+  onCloseModal,
+}: {
+  cabinToUpdate?: Cabin;
+  onCloseModal?: () => void;
+}) {
   const {
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<Cabin>({
-    defaultValues: {},
+    defaultValues: cabinToUpdate ?? {},
   });
+
   const { mutate: createCabin } = useCreateCabin();
+  const { mutate: updateCabin } = useUpdateCabin();
+
+  const isEditSession = !!cabinToUpdate?.id;
 
   const onSubmit = (data: Cabin) => {
-    console.log(data);
+    const fileList = data.image as unknown as FileList | null;
+    const image =
+      fileList && fileList.length > 0
+        ? fileList[0]
+        : (cabinToUpdate?.image ?? "");
 
-    createCabin({ ...data, image: (data.image as unknown as FileList)[0] });
+    if (isEditSession) {
+      updateCabin(
+        {
+          newCabin: { ...data, image },
+          id: cabinToUpdate.id,
+        },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        },
+      );
+    } else {
+      createCabin(
+        { ...data, image },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        },
+      );
+    }
   };
-  const onError = (errors: FieldErrors<Cabin>) => {
-    console.log(errors);
-  };
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit, onError)}
-      className="rounded-xl border border-stone-200 bg-white"
-    >
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Input
         label="Name"
         type="text"
@@ -89,14 +123,14 @@ function CabinForm() {
         error={errors.description?.message}
       />
       <div className="grid grid-cols-[1fr_2fr] items-center gap-4 px-6 py-4">
-        <label className="text-sm font-medium text-stone-500">
+        <label className="text-sm font-medium text-stone-800">
           Cabin photo
         </label>
         <label
           htmlFor="image"
           className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-stone-300 bg-stone-50 px-4 py-2 text-center transition hover:bg-stone-100"
         >
-          <span className="text-sm text-stone-500">
+          <span className="text-sm text-stone-800">
             Drop image here or{" "}
             <span className="font-medium text-indigo-500">browse</span>
           </span>
@@ -107,22 +141,20 @@ function CabinForm() {
             accept="image/*"
             className="hidden"
             {...register("image", {
-              required: "This field is required",
+              required: isEditSession ? false : "This field is required",
             })}
           />
-          {errors.image?.message && (
-            <p className="flex items-start gap-1 text-xs text-red-500">
-              {errors.image?.message}
-            </p>
-          )}
         </label>
+        {errors.image?.message && (
+          <p className="text-xs text-red-500">{errors.image?.message}</p>
+        )}
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-3 px-6 py-4">
         <button
           type="reset"
-          className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-medium text-stone-600 transition hover:bg-stone-50"
+          className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-medium text-stone-800 transition hover:bg-stone-50"
+          onClick={() => onCloseModal?.()}
         >
           Cancel
         </button>
@@ -130,7 +162,13 @@ function CabinForm() {
           type="submit"
           className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
         >
-          {isSubmitting ? "Add cabin..." : "Add cabin"}
+          {isEditSession
+            ? isSubmitting
+              ? "Update cabin..."
+              : "Update cabin"
+            : isSubmitting
+              ? "Add cabin..."
+              : "Add cabin"}
         </button>
       </div>
     </form>

@@ -13,19 +13,9 @@ export async function getCabins() {
 }
 
 export async function createCabin(newCabin: Cabin) {
-  const imageIsFile = newCabin.image instanceof File;
-  const hasImagePath =
-    !imageIsFile &&
-    typeof newCabin.image === "string" &&
-    newCabin.image.startsWith(supabaseUrl);
-
-  const imageName = imageIsFile
-    ? `${Math.random()}-${(newCabin.image as File).name}`.replaceAll("/", "")
-    : "";
-
-  const imagePath = hasImagePath
-    ? newCabin.image
-    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+  const { imagePath, hasImagePath, imageName } = getImageDetails(
+    newCabin.image,
+  );
 
   const { data, error } = await supabase
     .from("cabins")
@@ -51,6 +41,35 @@ export async function createCabin(newCabin: Cabin) {
   }
 }
 
+export async function updateCabin(newCabin: Cabin, id: number) {
+  const { imagePath, hasImagePath, imageName } = getImageDetails(
+    newCabin.image,
+  );
+
+  const { data, error } = await supabase
+    .from("cabins")
+    .update({ ...newCabin, image: imagePath })
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Cabin could not be updated");
+  }
+
+  if (hasImagePath) return;
+
+  const { error: storageError } = await supabase.storage
+    .from("cabin-images")
+    .upload(imageName, newCabin.image);
+
+  if (storageError) {
+    console.error(storageError);
+    throw new Error(
+      "Cabin image could not be uploaded and the cabin was not updated",
+    );
+  }
+}
 
 export async function deleteCabin(id: number) {
   const { error } = await supabase.from("cabins").delete().eq("id", id);
@@ -58,6 +77,21 @@ export async function deleteCabin(id: number) {
     console.error(error);
     throw new Error("Cabin could not be deleted");
   }
+}
+
+function getImageDetails(image: File | string) {
+  const imageIsFile = image instanceof File;
+  const hasImagePath =
+    !imageIsFile && typeof image === "string" && image.startsWith(supabaseUrl);
+
+  const imageName = imageIsFile
+    ? `${Math.random()}-${(image as File).name}`.replaceAll("/", "")
+    : "";
+
+  const imagePath = hasImagePath
+    ? image
+    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+  return { imagePath, hasImagePath, imageName };
 }
 
 // cabins.service.ts : Clair si tu utilises la classe CabinsService (common en Angular / backend).

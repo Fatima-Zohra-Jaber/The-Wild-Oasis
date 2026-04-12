@@ -14,6 +14,7 @@ import Error from "../components/Error";
 import ConfirmationModal from "../components/ConfirmationModal";
 import Filter from "../components/Filter";
 import Sort from "../components/Sort";
+import Table from "../components/Table";
 
 const optionsFilter = [
   { key: "all", label: "All" },
@@ -99,77 +100,45 @@ function Cabins() {
       ) : error ? (
         <Error message="An error occurred while fetching cabins." />
       ) : filteredCabins && filteredCabins.length > 0 ? (
-        <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-stone-200">
-                <th className="w-20 p-3"></th>
-                <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
-                  Cabin
-                </th>
-                <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
-                  Capacity
-                </th>
-                <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
-                  Price
-                </th>
-                <th className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase">
-                  Discount
-                </th>
-                <th className="p-3"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedCabins?.map((cabin) => (
-                <tr
-                  key={cabin.id}
-                  className="border-b border-stone-200/60 transition-colors last:border-none hover:bg-stone-50"
+        <Table>
+          <Table.Header columns={["", "Name", "Capacity", "Regular price", "Discount", "Actions"]} />
+          <Table.Body>
+            {sortedCabins?.map((cabin) => (
+              <Table.Row key={cabin.id}>
+                <Table.ImageCell src={cabin.image} alt={cabin.name} />
+                <Table.TextCell>{cabin.name}</Table.TextCell>
+                <Table.TextCell>
+                  Fits up to {cabin.maxCapacity} guests
+                </Table.TextCell>
+                <Table.TextCell>{formatCurrency(cabin.regularPrice)}</Table.TextCell>
+                <Table.TextCell
+                  className={
+                    cabin.discount ? "text-green-600" : "text-stone-300"
+                  }
                 >
-                  <td className="p-1">
-                    <img
-                      src={cabin.image}
-                      alt={cabin.name}
-                      className="block h-12 w-18 rounded-lg object-cover"
-                    />
-                  </td>
-                  <td className="p-3 text-sm font-medium text-stone-800">
-                    {cabin.name}
-                  </td>
-                  <td className="p-3 text-sm text-stone-600">
-                    Fits up to {cabin.maxCapacity} guests
-                  </td>
-                  <td className="p-3 text-sm font-medium text-stone-800">
-                    {formatCurrency(cabin.regularPrice)}
-                  </td>
-                  <td
-                    className={`p-3 text-sm font-medium ${cabin.discount ? "text-green-600" : "text-stone-300"}`}
+                  {cabin.discount ? formatCurrency(cabin.discount) : "—"}
+                </Table.TextCell>
+                <Table.ActionCell>
+                  <button
+                    className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
+                    onClick={() => handleUpdateCabin(cabin)}
                   >
-                    {cabin.discount ? formatCurrency(cabin.discount) : "—"}
-                  </td>
-                  <td className="p-3">
-                    <button
-                      className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
-                      onClick={() => handleUpdateCabin(cabin)}
-                      // disabled={isDelting}
-                    >
-                      <HiOutlinePencilSquare size={18} />
-                    </button>
-                    <button
-                      className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
-                      onClick={() => {
-                        setCabinToDelete(cabin.id);
-                        setOpenConfirmModal(true);
-                      }}
-                      // disabled={isDelting}
-                    >
-                      <HiXMark size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                    <HiOutlinePencilSquare size={18} />
+                  </button>
+                  <button
+                    className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
+                    onClick={() => {
+                      setCabinToDelete(cabin.id);
+                      setOpenConfirmModal(true);
+                    }}
+                  >
+                    <HiXMark size={18} />
+                  </button>
+                </Table.ActionCell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
       ) : (
         <Error message="No cabins found. Please adjust your filters or add new cabins." />
       )}

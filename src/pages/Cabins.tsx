@@ -1,38 +1,81 @@
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
-  HiEllipsisVertical,
+  // HiEllipsisVertical,
   HiOutlinePencilSquare,
   HiXMark,
 } from "react-icons/hi2";
 import { useCabins, useDeleteCabin } from "../hooks/useCabins";
 import { formatCurrency } from "../utils/helpers";
-import { useState } from "react";
 import Modal from "../components/Modal";
 import CabinForm, { type Cabin } from "../components/CabinForm";
 import Spinner from "../components/Spinner";
 import Error from "../components/Error";
 import ConfirmationModal from "../components/ConfirmationModal";
+import Filter from "../components/Filter";
+import Sort from "../components/Sort";
+
+const optionsFilter = [
+  { key: "all", label: "All" },
+  { key: "no-discount", label: "No discount" },
+  { key: "with-discount", label: "With discount" },
+];
+
+const optionsSort = [
+  { key: "name-asc", label: "Sort by name (A-Z)" },
+  { key: "name-desc", label: "Sort by name (Z-A)" },
+  { key: "regularPrice-asc", label: "Sort by price (low first)" },
+  { key: "regularPrice-desc", label: "Sort by price (high first)" },
+  { key: "maxCapacity-asc", label: "Sort by capacity (low first)" },
+  { key: "maxCapacity-desc", label: "Sort by capacity (high first)" },
+];
 
 function Cabins() {
-  const [filter, setFilter] = useState("all");
   const [openModal, setOpenModal] = useState(false);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
-
   const [cabinToUpdate, setCabinToUpdate] = useState<Cabin | undefined>();
   const [cabinToDelete, setCabinToDelete] = useState<number | null>(null);
 
   const { data: cabins, isLoading, error } = useCabins();
   const { mutate: deleteCabin } = useDeleteCabin();
 
+  const [searchParams] = useSearchParams();
+
   const filteredCabins = cabins?.filter((cabin) => {
-    if (filter === "no-discount") return !cabin.discount;
-    if (filter === "with-discount") return !!cabin.discount;
+    if (searchParams.get("discount") === "no-discount") return !cabin.discount;
+    if (searchParams.get("discount") === "with-discount")
+      return !!cabin.discount;
     return true;
+  });
+
+  // const sortedCabins = filteredCabins?.sort((a, b) => {
+  //   const sortBy = searchParams.get("sortBy");
+  //   if (sortBy === "name-asc") return a.name.localeCompare(b.name);
+  //   if (sortBy === "name-desc") return b.name.localeCompare(a.name);
+  //   if (sortBy === "regularPrice-asc")
+  //     return a.regularPrice - b.regularPrice;
+  //   if (sortBy === "regularPrice-desc")
+  //     return b.regularPrice - a.regularPrice;
+  //   if (sortBy === "maxCapacity-asc")
+  //     return a.maxCapacity - b.maxCapacity;
+  //   if (sortBy === "maxCapacity-desc")
+  //     return b.maxCapacity - a.maxCapacity;
+  //   return 0;
+  // });
+
+  const sortBy = searchParams.get("sortBy") || optionsSort[0].key;
+  const [field, direction] = sortBy.split("-") as [string, "asc" | "desc"];
+  const modifier = direction === "asc" ? 1 : -1;
+  const sortedCabins = filteredCabins?.sort((a, b) => {
+    if (field === "name") return a.name.localeCompare(b.name) * modifier;
+    return (a[field] - b[field]) * modifier;
   });
 
   const handleUpdateCabin = (cabin: Cabin) => {
     setCabinToUpdate(cabin);
     setOpenModal(true);
   };
+
   return (
     <>
       <div className="mb-6 flex items-center justify-between">
@@ -47,33 +90,8 @@ function Cabins() {
           >
             Add new cabin
           </button>
-
-          <div className="flex rounded-lg border border-stone-200 bg-white p-0.5">
-            {[
-              { key: "all", label: "All" },
-              { key: "no-discount", label: "No discount" },
-              { key: "with-discount", label: "With discount" },
-            ].map(({ key, label }) => (
-              <button
-                key={key}
-                onClick={() => setFilter(key)}
-                className={`rounded-md border-none px-3 py-1.5 text-sm transition-all ${
-                  filter === key
-                    ? "border border-stone-200 bg-indigo-600 font-medium text-white shadow-sm"
-                    : "hover:text-stone-900"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          <select className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-800 focus:outline-none">
-            <option>Sort by name (A-Z)</option>
-            <option>Sort by name (Z-A)</option>
-            <option>Sort by price (low)</option>
-            <option>Sort by price (high)</option>
-          </select>
+          <Filter filterKey="discount" options={optionsFilter} />
+          <Sort options={optionsSort} />
         </div>
       </div>
       {isLoading ? (
@@ -102,7 +120,7 @@ function Cabins() {
               </tr>
             </thead>
             <tbody>
-              {filteredCabins?.map((cabin) => (
+              {sortedCabins?.map((cabin) => (
                 <tr
                   key={cabin.id}
                   className="border-b border-stone-200/60 transition-colors last:border-none hover:bg-stone-50"

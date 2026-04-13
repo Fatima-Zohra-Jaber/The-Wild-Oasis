@@ -9,12 +9,13 @@ import Bookings from "./pages/Bookings";
 import PageNotFound from "./pages/PageNotFound";
 import Layout from "./components/Layout";
 import Checkin from "./pages/Checkin";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Layout />}>
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="users" element={<Users />} />

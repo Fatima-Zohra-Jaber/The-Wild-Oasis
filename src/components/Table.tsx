@@ -71,13 +71,13 @@ function ImageCell({
 }
 function TextCell({
   children,
-  className = "",
+  className = "text-stone-800",
 }: {
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <td className={`p-3 text-sm font-medium text-stone-800 ${className}`}>
+    <td className={`p-3 text-sm font-medium ${className}`}>
       {children}
     </td>
   );

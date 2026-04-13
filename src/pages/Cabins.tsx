@@ -15,6 +15,7 @@ import ConfirmationModal from "../components/ConfirmationModal";
 import Filter from "../components/Filter";
 import Sort from "../components/Sort";
 import Table from "../components/Table";
+import Button from "../components/Button";
 
 const optionsFilter = [
   { key: "all", label: "All" },
@@ -82,15 +83,15 @@ function Cabins() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-medium text-stone-800">All cabins</h1>
         <div className="flex items-center gap-4">
-          <button
-            className="rounded-md border border-stone-200 bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm"
+          <Button
+            variant="primary"
             onClick={() => {
               setOpenModal(true);
               setCabinToUpdate(undefined);
             }}
           >
             Add new cabin
-          </button>
+          </Button>
           <Filter filterKey="discount" options={optionsFilter} />
           <Sort options={optionsSort} />
         </div>
@@ -101,7 +102,16 @@ function Cabins() {
         <Error message="An error occurred while fetching cabins." />
       ) : filteredCabins && filteredCabins.length > 0 ? (
         <Table>
-          <Table.Header columns={["", "Name", "Capacity", "Regular price", "Discount", "Actions"]} />
+          <Table.Header
+            columns={[
+              "",
+              "Name",
+              "Capacity",
+              "Regular price",
+              "Discount",
+              "",
+            ]}
+          />
           <Table.Body>
             {sortedCabins?.map((cabin) => (
               <Table.Row key={cabin.id}>
@@ -110,7 +120,9 @@ function Cabins() {
                 <Table.TextCell>
                   Fits up to {cabin.maxCapacity} guests
                 </Table.TextCell>
-                <Table.TextCell>{formatCurrency(cabin.regularPrice)}</Table.TextCell>
+                <Table.TextCell>
+                  {formatCurrency(cabin.regularPrice)}
+                </Table.TextCell>
                 <Table.TextCell
                   className={
                     cabin.discount ? "text-green-600" : "text-stone-300"
@@ -119,21 +131,21 @@ function Cabins() {
                   {cabin.discount ? formatCurrency(cabin.discount) : "—"}
                 </Table.TextCell>
                 <Table.ActionCell>
-                  <button
-                    className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
+                  <Button
+                    variant="base"
                     onClick={() => handleUpdateCabin(cabin)}
                   >
                     <HiOutlinePencilSquare size={18} />
-                  </button>
-                  <button
-                    className="rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700"
+                  </Button>
+                  <Button
+                    variant="base"
                     onClick={() => {
                       setCabinToDelete(cabin.id);
                       setOpenConfirmModal(true);
                     }}
                   >
                     <HiXMark size={18} />
-                  </button>
+                  </Button>
                 </Table.ActionCell>
               </Table.Row>
             ))}

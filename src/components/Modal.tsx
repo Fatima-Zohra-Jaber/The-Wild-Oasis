@@ -1,5 +1,6 @@
 import { createPortal } from "react-dom";
 import { HiXMark } from "react-icons/hi2";
+import Button from "./Button";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -8,16 +9,20 @@ interface ModalProps {
 
 function Modal({ children, onClose }: ModalProps) {
   return createPortal(
-    <div className="fixed inset-0 flex items-center justify-center bg-white/10 backdrop-blur-xs z-50">
-      <div className="relative max-h-[90%] max-w-[80%] rounded-lg shadow-lg bg-white p-8">
-        <button className="absolute top-3 right-3" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/10 backdrop-blur-xs">
+      <div className="relative max-h-[90%] max-w-[80%] rounded-lg bg-white p-8 shadow-lg">
+        <Button
+          variant="base"
+          className="absolute top-3 right-3"
+          onClick={onClose}
+        >
           <HiXMark size={20} />
-        </button>
+        </Button>
 
         <div>{children}</div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 

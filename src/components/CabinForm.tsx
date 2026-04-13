@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import Input from "./Input";
 import { useCreateCabin, useUpdateCabin } from "../hooks/useCabins";
-
+import Button from "./Button";
 export interface Cabin {
   id: number;
   name: string;
@@ -151,17 +151,14 @@ function CabinForm({
       </div>
 
       <div className="flex justify-end gap-3 px-6 py-4">
-        <button
+        <Button
           type="reset"
-          className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-medium text-stone-800 transition hover:bg-stone-50"
+          variant="secondary"
           onClick={() => onCloseModal?.()}
         >
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
-        >
+        </Button>
+        <Button type="submit" isSubmitting={isSubmitting}>
           {isEditSession
             ? isSubmitting
               ? "Update cabin..."
@@ -169,7 +166,7 @@ function CabinForm({
             : isSubmitting
               ? "Add cabin..."
               : "Add cabin"}
-        </button>
+        </Button>
       </div>
     </form>
   );

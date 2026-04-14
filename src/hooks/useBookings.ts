@@ -1,12 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 import {
-  createBooking,
-  deleteBooking,
   getBookings,
-  updateBooking,
+  getBookingsAfterDate,
+  getStaysAfterDate,
 } from "../services/apiBookings";
-import type { Booking } from "../pages/Bookings";
 import { useSearchParams } from "react-router-dom";
 
 export function useBookings() {
@@ -26,3 +23,25 @@ export function useBookings() {
   });
 }
 
+export function useRecentBookings() {
+  const [searchParams] = useSearchParams();
+  const numDate = !searchParams.get("last") ? 7: Number(searchParams.get("last"));
+  const queryDate = new Date(new Date().getTime() - numDate * 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentBookings, isLoading } = useQuery({
+    queryKey: ["bookings", `last-${numDate}-days`],
+    queryFn: () => getBookingsAfterDate(queryDate),
+  });
+  return {recentBookings, isLoading};
+}
+
+export function useRecentStays() {
+  const [searchParams] = useSearchParams();
+  const numDate = !searchParams.get("last") ? 7: Number(searchParams.get("last"));
+  const queryDate = new Date(new Date().getTime() - numDate * 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentStays, isLoading } = useQuery({
+    queryKey: ["stays", `last-${numDate}-days`],
+    queryFn: () => getStaysAfterDate(queryDate),
+  });
+  const confirmStays = recentStays?.filter((stay) => stay.status === "checked-in" || stay.status === "checked-out");
+  return {recentStays, confirmStays, isLoading};
+}

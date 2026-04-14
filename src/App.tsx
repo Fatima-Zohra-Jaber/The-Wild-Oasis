@@ -10,26 +10,29 @@ import PageNotFound from "./pages/PageNotFound";
 import Layout from "./components/Layout";
 import Checkin from "./pages/Checkin";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ThemeProvider from "./contexts/ThemeProvider";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="users" element={<Users />} />
-          <Route path="account" element={<Account />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="cabins" element={<Cabins />} />
-          <Route path="bookings" element={<Bookings />} />
-          <Route path="checkin/:bookingId" element={<Checkin />} />
-        </Route>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="account" element={<Account />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="cabins" element={<Cabins />} />
+            <Route path="bookings" element={<Bookings />} />
+            <Route path="checkin/:bookingId" element={<Checkin />} />
+          </Route>
 
-        <Route path="login" element={<Login />} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="login" element={<Login />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

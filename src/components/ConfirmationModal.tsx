@@ -17,11 +17,11 @@ function ConfirmationModal({
 }: ConfirmationModalProps) {
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-white/10 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-xl"
+        className="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-xl dark:bg-slate-800"
         onClick={(e) => e.stopPropagation()}
       >
         <Button
@@ -33,14 +33,17 @@ function ConfirmationModal({
         </Button>
 
         <div className="mb-6 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50">
-            <HiExclamationCircle className="text-red-500" size={32} />
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50 dark:bg-red-900/30">
+            <HiExclamationCircle
+              className="text-red-500 dark:text-red-500/70"
+              size={32}
+            />
           </div>
           <div>
-            <h2 className="mb-1 text-[15px] font-medium text-stone-800">
+            <h2 className="mb-1 text-[15px] font-medium text-stone-800 dark:text-slate-100">
               {title}
             </h2>
-            <p className="text-[13px] leading-relaxed text-stone-700">
+            <p className="text-[13px] leading-relaxed text-stone-700 dark:text-slate-400">
               {message}
             </p>
           </div>
@@ -50,11 +53,7 @@ function ConfirmationModal({
           <Button variant="secondary" className="flex-1" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            variant="danger"
-            className="flex-1"
-            onClick={onConfirm}
-          >
+          <Button variant="danger" className="flex-1" onClick={onConfirm}>
             Delete
           </Button>
         </div>

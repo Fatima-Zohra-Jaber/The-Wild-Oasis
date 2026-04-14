@@ -66,7 +66,9 @@ function Bookings() {
   return (
     <>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-medium text-stone-800">All bookings</h1>
+        <h1 className="text-2xl font-medium text-stone-800 dark:text-slate-50">
+          All bookings
+        </h1>
         <div className="flex items-center gap-4">
           <Filter filterKey="status" options={optionsFilter} />
           <Sort options={optionsSort} />
@@ -86,8 +88,10 @@ function Bookings() {
               <Table.Row key={booking.id}>
                 <Table.TextCell>{booking.cabins.name}</Table.TextCell>
                 <Table.TextCell>
-                  <div className="font-medium">{booking.guests.fullName}</div>
-                  <div className="text-xs text-stone-500">
+                  <div className="font-medium dark:text-slate-100">
+                    {booking.guests.fullName}
+                  </div>
+                  <div className="text-xs text-stone-500 dark:text-slate-500">
                     {booking.guests.email}
                   </div>
                 </Table.TextCell>
@@ -98,7 +102,7 @@ function Bookings() {
                       : formatDistanceFromNow(booking.startDate)}{" "}
                     &rarr; {booking.numNights} night stay{" "}
                   </span>
-                  <div className="text-xs text-stone-500">
+                  <div className="text-xs text-stone-500 dark:text-slate-500">
                     {new Date(booking.startDate).toLocaleDateString()} &rarr;{" "}
                     {""}
                     {new Date(booking.endDate).toLocaleDateString()}
@@ -108,10 +112,10 @@ function Bookings() {
                   <span
                     className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
                       booking.status === "checked-in"
-                        ? "bg-green-100 text-green-700"
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300"
                         : booking.status === "checked-out"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-gray-100 text-gray-700"
+                          ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
+                          : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                     }`}
                   >
                     {booking.status}

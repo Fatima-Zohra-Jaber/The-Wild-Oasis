@@ -19,19 +19,19 @@ type Props = InputProps | TextareaProps;
 
 function Input({ label, error, type = "text", ...props }: Props) {
   const isTextarea = type === "textarea";
-  const baseClass = `w-full rounded-lg border bg-white px-3 py-2 text-sm text-stone-900
-     transition placeholder:text-stone-300 focus:outline-none
-      focus:ring-2 ${
-        error
-          ? "border-red-300 focus:border-red-400 focus:ring-red-100"
-          : "border-stone-200 focus:border-indigo-400 focus:ring-indigo-100"
-      }`;
+  const baseClass = `w-full rounded-lg border bg-white px-3 py-2 text-sm text-stone-900 transition placeholder:text-stone-300 focus:outline-none focus:ring-2 dark:bg-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500 ${
+    error
+      ? "border-red-300 focus:border-red-400 focus:ring-red-100 dark:border-red-700 dark:focus:border-red-600 dark:focus:ring-red-900"
+      : "border-stone-200 focus:border-indigo-400 focus:ring-indigo-100 dark:border-slate-600 dark:focus:border-indigo-600 dark:focus:ring-indigo-900"
+  }`;
 
   return (
     <div className="grid grid-cols-[1fr_2fr] items-center gap-4 px-6 py-2">
-      <label className="text-sm font-medium text-stone-800">
+      <label className="text-sm font-medium text-stone-800 dark:text-slate-300">
         {label}
-        {props.required && <span className="font-bold text-red-600"> *</span>}
+        {props.required && (
+          <span className="font-bold text-red-600 dark:text-red-400"> *</span>
+        )}
       </label>
       {isTextarea ? (
         <textarea
@@ -49,8 +49,7 @@ function Input({ label, error, type = "text", ...props }: Props) {
         />
       )}
       {error && (
-        <p className="flex items-start gap-1 text-xs text-red-500">
-   
+        <p className="flex items-start gap-1 text-xs text-red-500 dark:text-red-400">
           {error}
         </p>
       )}

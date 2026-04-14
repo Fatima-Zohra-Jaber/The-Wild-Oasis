@@ -1,7 +1,7 @@
 
 function Settings() {
   return (
-    <div>Settings</div>
+    <div className="text-stone-800 dark:text-slate-50">Settings</div>
   )
 }
 

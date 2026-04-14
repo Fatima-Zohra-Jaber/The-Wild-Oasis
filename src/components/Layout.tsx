@@ -8,7 +8,7 @@ function Layout() {
       <Sidebar />
       <div className="flex flex-1 flex-col">
         <Header />
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-6">
+        <main className="flex-1 overflow-y-auto bg-gray-50 p-6 dark:bg-slate-900">
           <div className="mx-auto max-w-7xl">
             <Outlet />
           </div>

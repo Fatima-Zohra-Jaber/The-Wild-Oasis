@@ -81,7 +81,9 @@ function Cabins() {
   return (
     <>
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-medium text-stone-800">All cabins</h1>
+        <h1 className="text-2xl font-medium text-stone-800 dark:text-slate-50">
+          All cabins
+        </h1>
         <div className="flex items-center gap-4">
           <Button
             variant="primary"
@@ -103,14 +105,7 @@ function Cabins() {
       ) : filteredCabins && filteredCabins.length > 0 ? (
         <Table>
           <Table.Header
-            columns={[
-              "",
-              "Name",
-              "Capacity",
-              "Regular price",
-              "Discount",
-              "",
-            ]}
+            columns={["", "Name", "Capacity", "Regular price", "Discount", ""]}
           />
           <Table.Body>
             {sortedCabins?.map((cabin) => (
@@ -125,7 +120,9 @@ function Cabins() {
                 </Table.TextCell>
                 <Table.TextCell
                   className={
-                    cabin.discount ? "text-green-600" : "text-stone-300"
+                    cabin.discount
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-stone-300 dark:text-slate-600"
                   }
                 >
                   {cabin.discount ? formatCurrency(cabin.discount) : "—"}

@@ -15,7 +15,7 @@ function Sort({ options }: SortProps) {
 
   return (
     <select
-      className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-800 focus:outline-none"
+      className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-800 focus:outline-none dark:border-slate-600 dark:bg-slate-700 dark:text-slate-200"
       onChange={handleChange}
       value={currentSort}
     >

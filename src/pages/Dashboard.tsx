@@ -1,7 +1,7 @@
 
 function Dashboard() {
   return (
-    <div>Dashboard</div>
+    <div className="text-stone-800 dark:text-slate-50">Dashboard</div>
   )
 }
 

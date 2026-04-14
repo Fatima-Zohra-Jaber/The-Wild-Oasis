@@ -48,12 +48,12 @@ function Users() {
 
   return (
     <>
-      <h1 className="mb-6 text-2xl font-medium text-stone-800">
+      <h1 className="mb-6 text-2xl font-medium text-stone-800 dark:text-slate-50">
         Create a new user
       </h1>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-2xl rounded-lg bg-white p-6"
+        className="w-full max-w-2xl rounded-lg bg-white p-6 dark:bg-slate-800"
       >
         <Input
           label="Full name"

@@ -13,7 +13,7 @@ const TableContext = createContext<TableContextType | undefined>(undefined);
 
 function Table({ children, columns }: TableProps) {
   return (
-    <div className="overflow-hidden rounded-xl border border-stone-200 bg-white">
+    <div className="overflow-hidden rounded-xl border border-stone-200 bg-white dark:border-slate-700 dark:bg-slate-800">
       <TableContext.Provider value={{ columns }}>
         <table className="w-full">{children}</table>
       </TableContext.Provider>
@@ -24,11 +24,11 @@ function Table({ children, columns }: TableProps) {
 function Header({ columns }: { columns: string[] }) {
   return (
     <thead>
-      <tr className="border-b border-stone-200">
+      <tr className="border-b border-stone-200 dark:border-slate-700">
         {columns.map((column) => (
           <th
             key={column}
-            className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase"
+            className="p-3 text-left text-xs font-medium tracking-wider text-stone-600 uppercase dark:text-slate-400"
           >
             {column}
           </th>
@@ -44,7 +44,7 @@ function Body({ children }: { children: ReactNode }) {
 
 function Row({ children }: { children: ReactNode }) {
   return (
-    <tr className="border-b border-stone-200/60 transition-colors last:border-none hover:bg-stone-50">
+    <tr className="border-b border-stone-200/60 transition-colors last:border-none hover:bg-stone-50 dark:border-slate-700/60 dark:hover:bg-slate-700">
       {children}
     </tr>
   );
@@ -71,16 +71,12 @@ function ImageCell({
 }
 function TextCell({
   children,
-  className = "text-stone-800",
+  className = "text-stone-800 dark:text-slate-200",
 }: {
   children: ReactNode;
   className?: string;
 }) {
-  return (
-    <td className={`p-3 text-sm font-medium ${className}`}>
-      {children}
-    </td>
-  );
+  return <td className={`p-3 text-sm font-medium ${className}`}>{children}</td>;
 }
 
 function ActionCell({ children }: { children: ReactNode }) {
